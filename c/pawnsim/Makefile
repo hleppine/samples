@@ -1,0 +1,21 @@
+CC=gcc
+CFLAGS=-Wall -pedantic -lm -ldl -std=c99 -g -m32
+LDFLAGS=
+
+MACROS=-DLINUX_SIMULATION -DHAVE_STDINT_H -DAMX_ANSIONLY -DAMX_NOPROPLIST -DAMX_TERMINAL
+
+PAWNDIR=pawn
+COREDIR=$(PAWNDIR)/core
+
+CORESRC=$(COREDIR)/amx.c $(COREDIR)/amxcons.c $(COREDIR)/amxcore.c
+PAWNSRC=$(PAWNDIR)/debugprint.c $(PAWNDIR)/amxaux.c
+
+SOURCES=pawnrun.c $(CORESRC) $(PAWNSRC)
+
+BUILD_DIR=build
+EXECUTABLE=$(BUILD_DIR)/pawnrun
+
+all:
+	mkdir -p $(BUILD_DIR)
+	$(CC) -o $(EXECUTABLE) -I$(PAWNDIR) -I$(COREDIR) $(SOURCES) $(MACROS) $(CFLAGS)
+

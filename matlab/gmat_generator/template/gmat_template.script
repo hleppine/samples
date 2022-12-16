@@ -1,0 +1,115 @@
+% General Mission Analysis Tool(GMAT) Script
+% Template for automatic generation 
+
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft Aalto1;
+GMAT Aalto1.DateFormat = UTCGregorian;
+GMAT Aalto1.Epoch = '01 Jan 2000 11:59:28.000';
+GMAT Aalto1.CoordinateSystem = EarthFixed;
+GMAT Aalto1.DisplayStateType = Cartesian;
+GMAT Aalto1.X = 7100;
+GMAT Aalto1.Y = 0;
+GMAT Aalto1.Z = 1300;
+GMAT Aalto1.VX = 0;
+GMAT Aalto1.VY = 7.35;
+GMAT Aalto1.VZ = 1;
+GMAT Aalto1.DryMass = 4;
+GMAT Aalto1.Cd = 2.2;
+GMAT Aalto1.Cr = 1.8;
+GMAT Aalto1.DragArea = 0.03;
+GMAT Aalto1.SRPArea = 0.03;
+GMAT Aalto1.NAIFId = -123456789;
+GMAT Aalto1.NAIFIdReferenceFrame = -123456789;
+GMAT Aalto1.OrbitColor = Red;
+GMAT Aalto1.TargetColor = Teal;
+GMAT Aalto1.Id = 'SatId';
+GMAT Aalto1.Attitude = CoordinateSystemFixed;
+GMAT Aalto1.SPADSRPScaleFactor = 1;
+GMAT Aalto1.ModelFile = '../data/vehicle/models/aura.3ds';
+GMAT Aalto1.ModelOffsetX = 0;
+GMAT Aalto1.ModelOffsetY = 0;
+GMAT Aalto1.ModelOffsetZ = 0;
+GMAT Aalto1.ModelRotationX = 0;
+GMAT Aalto1.ModelRotationY = 0;
+GMAT Aalto1.ModelRotationZ = 0;
+GMAT Aalto1.ModelScale = 3;
+GMAT Aalto1.AttitudeDisplayStateType = 'Quaternion';
+GMAT Aalto1.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT Aalto1.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT Aalto1.EulerAngleSequence = '321';
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel DefaultProp_ForceModel;
+GMAT DefaultProp_ForceModel.CentralBody = Earth;
+GMAT DefaultProp_ForceModel.PrimaryBodies = {Earth};
+GMAT DefaultProp_ForceModel.PointMasses = {Luna, Sun};
+GMAT DefaultProp_ForceModel.SRP = On;
+GMAT DefaultProp_ForceModel.RelativisticCorrection = Off;
+GMAT DefaultProp_ForceModel.ErrorControl = RSSStep;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Degree = 36;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Order = 36;
+GMAT DefaultProp_ForceModel.GravityField.Earth.PotentialFile = 'JGM3.cof';
+GMAT DefaultProp_ForceModel.GravityField.Earth.EarthTideModel = 'None';
+GMAT DefaultProp_ForceModel.SRP.Flux = 1367;
+GMAT DefaultProp_ForceModel.SRP.SRPModel = Spherical;
+GMAT DefaultProp_ForceModel.SRP.Nominal_Sun = 149597870.691;
+GMAT DefaultProp_ForceModel.Drag.AtmosphereModel = MSISE90;
+GMAT DefaultProp_ForceModel.Drag.HistoricWeatherSource = 'ConstantFluxAndGeoMag';
+GMAT DefaultProp_ForceModel.Drag.PredictedWeatherSource = 'ConstantFluxAndGeoMag';
+GMAT DefaultProp_ForceModel.Drag.CSSISpaceWeatherFile = 'CSSI_2004To2026.txt';
+GMAT DefaultProp_ForceModel.Drag.SchattenFile = 'SchattenPredict.txt';
+GMAT DefaultProp_ForceModel.Drag.F107 = 150;
+GMAT DefaultProp_ForceModel.Drag.F107A = 150;
+GMAT DefaultProp_ForceModel.Drag.MagneticIndex = 3;
+GMAT DefaultProp_ForceModel.Drag.SchattenErrorModel = 'Nominal';
+GMAT DefaultProp_ForceModel.Drag.SchattenTimingModel = 'NominalCycle';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator DefaultProp;
+GMAT DefaultProp.FM = DefaultProp_ForceModel;
+GMAT DefaultProp.Type = RungeKutta89;
+GMAT DefaultProp.InitialStepSize = 1;
+GMAT DefaultProp.Accuracy = 9.999999999999999e-012;
+GMAT DefaultProp.MinStep = 0.001;
+GMAT DefaultProp.MaxStep = 1;
+GMAT DefaultProp.MaxStepAttempts = 50;
+GMAT DefaultProp.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create ReportFile ReportFile1;
+GMAT ReportFile1.SolverIterations = Current;
+GMAT ReportFile1.UpperLeft = [ 0 0 ];
+GMAT ReportFile1.Size = [ 0 0 ];
+GMAT ReportFile1.RelativeZOrder = 0;
+GMAT ReportFile1.Maximized = false;
+GMAT ReportFile1.Filename = 'C:\Users\hleppine\Documents\GitHub\aaltosoftware\lab\gmat_generator\output\ecef_log.txt';
+GMAT ReportFile1.Precision = 16;
+GMAT ReportFile1.Add = {Aalto1.UTCGregorian, Aalto1.EarthFixed.X, Aalto1.EarthFixed.Y, Aalto1.EarthFixed.Z, Aalto1.EarthFixed.VX, Aalto1.EarthFixed.VY, Aalto1.EarthFixed.VZ};
+GMAT ReportFile1.WriteHeaders = true;
+GMAT ReportFile1.LeftJustify = On;
+GMAT ReportFile1.ZeroFill = Off;
+GMAT ReportFile1.FixedWidth = true;
+GMAT ReportFile1.Delimiter = ' ';
+GMAT ReportFile1.ColumnWidth = 23;
+GMAT ReportFile1.WriteReport = true;
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+Propagate DefaultProp(Aalto1) {Aalto1.ElapsedDays = 1};

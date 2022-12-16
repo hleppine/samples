@@ -1,0 +1,1 @@
+- rb_tree: Unfinished implementation/prototype of a red-black tree, following textbook algorithms. It's missing the handling of the pool of nodes for the tree (to avoid dynamic memory allocation). Similar code was later completed into a closed-source implementation.
